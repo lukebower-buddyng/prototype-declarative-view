@@ -59,8 +59,38 @@ class ViewController: UIViewController {
             ]
         )
         
+        // virtual tree state 2
+               var v2 = V(
+                   parentId: "root",
+                   id: "container",
+                   type: .view,
+                   props: VProps(width: 200, height: 200, color: .green),
+                   children: [
+                        V(
+                            id: "purple",
+                            type: .view,
+                            props: VProps(width: 100, height: 100, color: .purple),
+                            children: []
+                        ),
+                        V(
+                           id: "blue",
+                           type: .view,
+                           props: VProps(width: 100, height: 100, color: .blue),
+                           children: [
+                               V(
+                                   id: "black",
+                                   type: .view,
+                                   props: VProps(width: 50, height: 50, color: .black),
+                                   children: []
+                               )
+                           ]
+                        ),
+                   ]
+               )
+        
         render(nextNode: &v0)
         render(nextNode: &v1, prevNode: v0)
+        render(nextNode: &v2, prevNode: v1)
     }
 }
 
@@ -103,6 +133,9 @@ func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
     // render current nodes
     for i in 0 ..< nextNode.children.count {
         nextNode.children[i].parentId = nodeIdPath // set parent id
+        if i == 0 {
+            yOrigin = 0 // reset yOrigin for first child (to position it at the top of the parent container)
+        }
         render(nextNode: &nextNode.children[i], yOrigin: yOrigin)
         if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
             yOrigin = childView.frame.origin.y + childView.frame.height // update start position
