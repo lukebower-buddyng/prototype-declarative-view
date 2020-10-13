@@ -27,7 +27,7 @@ class ViewController: UIViewController {
         views[rootView.id] = rootView
         
         // virtual tree state 0
-        let v0 = V(
+        var v0 = V(
             parentId: "root",
             id: "container",
             type: .view,
@@ -65,6 +65,7 @@ class ViewController: UIViewController {
             ]
         )
         
+        render(nextNode: &v0)
         render(nextNode: &v1, prevNode: v0)
     }
 }
@@ -73,28 +74,31 @@ var views = [String: View]()
 var nodes = [String: V]()
 
 func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
-    
     // check for parent
     guard let parentId = nextNode.parentId,
         let parentView = views[parentId] else {
             print("No root")
             return
     }
-    
-    // update nodes store
     let nodeIdPath = parentId + "." + nextNode.id
-    nodes[nodeIdPath] = nextNode
-    
-    // TODO check if nodes are different
-    
-    // add new view
-    let view = View(id: nextNode.id)
-    parentView.addSubview(view)
-    views[nodeIdPath] = view
-    
     var yOrigin = yOrigin ?? parentView.frame.origin.y
-    style(view: view, props: nextNode.props)
-    position(parentView: parentView, view: view, yOrigin: yOrigin)
+    
+    // check if node exists
+    if views[nodeIdPath] == nil {
+        // add new view if doesn't exist
+        let view = View(id: nextNode.id)
+        parentView.addSubview(view)
+        views[nodeIdPath] = view
+        
+        style(view: view, props: nextNode.props)
+        position(parentView: parentView, view: view, yOrigin: yOrigin)
+    }
+    else {
+        // TODO check if nodes are different
+        let view = views[nodeIdPath]!
+        style(view: view, props: nextNode.props)
+        position(parentView: parentView, view: view, yOrigin: yOrigin)
+    }
     
     for i in 0..<nextNode.children.count {
         nextNode.children[i].parentId = nodeIdPath // set parent id
@@ -119,12 +123,15 @@ func position(parentView: View, view: View, yOrigin: CGFloat) {
     view.frame.origin.y = yOrigin
 }
 
+func updateStyle() {}
+func updatePosition() {}
+
 struct V {
     let id: String
     let type: VTypes
     let props: VProps
     var children: [V]
-    var parentId: String? = "root"
+    var parentId: String? = nil
     var childrenIds = [String: V]()
     init(parentId: String? = nil, id: String, type: VTypes, props: VProps, children: [V]) {
         self.id = id
