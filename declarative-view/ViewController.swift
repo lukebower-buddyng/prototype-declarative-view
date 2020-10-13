@@ -88,9 +88,21 @@ class ViewController: UIViewController {
                    ]
                )
         
-        render(nextNode: &v0)
-        render(nextNode: &v1, prevNode: v0)
-        render(nextNode: &v2, prevNode: v1)
+        render(nextNode: &v0, yOrigin: 100)
+        render(nextNode: &v1, prevNode: v0, yOrigin: 100)
+        render(nextNode: &v2, prevNode: v1, yOrigin: 100)
+        
+        trees.append(contentsOf: [v0, v1, v2])
+        
+        var _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(renderNext), userInfo: nil, repeats: true)
+
+    }
+    
+    var trees = [V]()
+    var currentTree = 0
+    @objc func renderNext() {
+        render(nextNode: &trees[(currentTree + 1) % trees.count], prevNode: trees[currentTree % trees.count], yOrigin: 100)
+        currentTree += 1
     }
 }
 
