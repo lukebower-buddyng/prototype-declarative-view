@@ -84,19 +84,19 @@ func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
     var yOrigin = yOrigin ?? parentView.frame.origin.y
     
     // check if node exists
-    if views[nodeIdPath] == nil {
+    if views[nodeIdPath] == nil || prevNode == nil {
         // add new view if doesn't exist
         let view = View(id: nextNode.id)
         parentView.addSubview(view)
         views[nodeIdPath] = view
-        
+        // configure from scratch
         style(view: view, props: nextNode.props)
         position(parentView: parentView, view: view, yOrigin: yOrigin)
     }
     else {
-        // TODO check if nodes are different
+        // apply updates compared to previous tree
         let view = views[nodeIdPath]!
-        style(view: view, props: nextNode.props)
+        updateStyle(view: view, prevNode: prevNode!, nextNode: nextNode)
         position(parentView: parentView, view: view, yOrigin: yOrigin)
     }
     
@@ -123,7 +123,17 @@ func position(parentView: View, view: View, yOrigin: CGFloat) {
     view.frame.origin.y = yOrigin
 }
 
-func updateStyle() {}
+func updateStyle(view: View, prevNode: V, nextNode: V) {
+    if prevNode.props.height != nextNode.props.height {
+        view.frame.size.height = nextNode.props.height
+    }
+    if prevNode.props.width != nextNode.props.width {
+        view.frame.size.width = nextNode.props.width
+    }
+    if prevNode.props.color != nextNode.props.color {
+        view.backgroundColor = nextNode.props.color
+    }
+}
 func updatePosition() {}
 
 struct V {
