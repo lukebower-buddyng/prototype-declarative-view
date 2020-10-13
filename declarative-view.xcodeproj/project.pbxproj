@@ -10,7 +10,6 @@
 		1409C30B2534AC3B003ACBCE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1409C30A2534AC3B003ACBCE /* AppDelegate.swift */; };
 		1409C30D2534AC3B003ACBCE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1409C30C2534AC3B003ACBCE /* SceneDelegate.swift */; };
 		1409C30F2534AC3B003ACBCE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1409C30E2534AC3B003ACBCE /* ViewController.swift */; };
-		1409C3122534AC3B003ACBCE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1409C3102534AC3B003ACBCE /* Main.storyboard */; };
 		1409C3142534AC3E003ACBCE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1409C3132534AC3E003ACBCE /* Assets.xcassets */; };
 		1409C3172534AC3E003ACBCE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1409C3152534AC3E003ACBCE /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -20,10 +19,10 @@
 		1409C30A2534AC3B003ACBCE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1409C30C2534AC3B003ACBCE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		1409C30E2534AC3B003ACBCE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		1409C3112534AC3B003ACBCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1409C3132534AC3E003ACBCE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1409C3162534AC3E003ACBCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1409C3182534AC3E003ACBCE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1409C31E2534AC51003ACBCE /* declarative-view.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "declarative-view.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,10 +55,10 @@
 		1409C3092534AC3B003ACBCE /* declarative-view */ = {
 			isa = PBXGroup;
 			children = (
+				1409C31E2534AC51003ACBCE /* declarative-view.entitlements */,
 				1409C30A2534AC3B003ACBCE /* AppDelegate.swift */,
 				1409C30C2534AC3B003ACBCE /* SceneDelegate.swift */,
 				1409C30E2534AC3B003ACBCE /* ViewController.swift */,
-				1409C3102534AC3B003ACBCE /* Main.storyboard */,
 				1409C3132534AC3E003ACBCE /* Assets.xcassets */,
 				1409C3152534AC3E003ACBCE /* LaunchScreen.storyboard */,
 				1409C3182534AC3E003ACBCE /* Info.plist */,
@@ -127,7 +126,6 @@
 			files = (
 				1409C3172534AC3E003ACBCE /* LaunchScreen.storyboard in Resources */,
 				1409C3142534AC3E003ACBCE /* Assets.xcassets in Resources */,
-				1409C3122534AC3B003ACBCE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,14 +145,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		1409C3102534AC3B003ACBCE /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1409C3112534AC3B003ACBCE /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		1409C3152534AC3E003ACBCE /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -284,6 +274,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "declarative-view/declarative-view.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N26S9GCRCK;
 				INFOPLIST_FILE = "declarative-view/Info.plist";
@@ -293,6 +284,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.lukeellisbower.declarative-view";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -302,6 +294,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "declarative-view/declarative-view.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N26S9GCRCK;
 				INFOPLIST_FILE = "declarative-view/Info.plist";
@@ -311,6 +304,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.lukeellisbower.declarative-view";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
