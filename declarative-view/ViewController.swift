@@ -13,12 +13,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // init root node
-        let rootNode = V(id: "root", type: .view, props: VProps(
-            width: view.frame.width, height: view.frame.height, color: .gray),
-         children: [])
-        nodes[rootNode.id] = rootNode
-        
         // init root view
         let rootView = View(id: "root")
         rootView.frame.size = view.frame.size
@@ -71,7 +65,6 @@ class ViewController: UIViewController {
 }
 
 var views = [String: View]()
-var nodes = [String: V]()
 
 func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
     // check for parent
@@ -98,9 +91,17 @@ func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
         let view = views[nodeIdPath]!
         updateStyle(view: view, prevNode: prevNode!, nextNode: nextNode)
         position(parentView: parentView, view: view, yOrigin: yOrigin)
+        // prune dead leaves (garbage collection)
+        for subView in view.subviews {
+            let childView = subView as! View
+            if nextNode.childrenIds[childView.id] == nil { // view is not needed in next time step
+                childView.removeFromSuperview()
+            }
+        }
     }
     
-    for i in 0..<nextNode.children.count {
+    // render current nodes
+    for i in 0 ..< nextNode.children.count {
         nextNode.children[i].parentId = nodeIdPath // set parent id
         render(nextNode: &nextNode.children[i], yOrigin: yOrigin)
         if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
