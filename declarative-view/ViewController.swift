@@ -12,18 +12,32 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        
+        // init root node
+        let rootNode = V(id: "root", type: .view, props: VProps(
+            width: view.frame.width, height: view.frame.height, color: .gray),
+         children: [])
+        nodes[rootNode.id] = rootNode
+        
+        // init root view
         let rootView = View(id: "root")
         rootView.frame.size = view.frame.size
+        rootView.backgroundColor = .gray
+        view.addSubview(rootView)
+        views[rootView.id] = rootView
         
-        let vd0 = V(
+        // virtual tree state 0
+        let v0 = V(
+            parentId: "root",
             id: "container",
             type: .view,
             props: VProps(width: 200, height: 200, color: .green),
             children: []
         )
         
-        let vd1 = V(
+        // virtual tree state 1
+        var v1 = V(
+            parentId: "root",
             id: "container",
             type: .view,
             props: VProps(width: 200, height: 200, color: .green),
@@ -51,15 +65,79 @@ class ViewController: UIViewController {
             ]
         )
         
-        view.addSubview(render(nextNode: vd1, parentView: rootView))
+        render(nextNode: &v1, prevNode: v0)
     }
+}
+
+var views = [String: View]()
+var nodes = [String: V]()
+
+func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
+    
+    // check for parent
+    guard let parentId = nextNode.parentId,
+        let parentView = views[parentId] else {
+            print("No root")
+            return
+    }
+    
+    // update nodes store
+    let nodeIdPath = parentId + "." + nextNode.id
+    nodes[nodeIdPath] = nextNode
+    
+    // TODO check if nodes are different
+    
+    // add new view
+    let view = View(id: nextNode.id)
+    parentView.addSubview(view)
+    views[nodeIdPath] = view
+    
+    var yOrigin = yOrigin ?? parentView.frame.origin.y
+    style(view: view, props: nextNode.props)
+    position(parentView: parentView, view: view, yOrigin: yOrigin)
+    
+    for i in 0..<nextNode.children.count {
+        nextNode.children[i].parentId = nodeIdPath // set parent id
+        render(nextNode: &nextNode.children[i], yOrigin: yOrigin)
+        if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
+            yOrigin = childView.frame.origin.y + childView.frame.height // update start position
+        }
+    }
+}
+
+func style(view: View, props: VProps) {
+    view.frame.size.width = props.width
+    view.frame.size.height = props.height
+    view.backgroundColor = props.color
+}
+
+func position(parentView: View, view: View, yOrigin: CGFloat) {
+    let parentWidth = parentView.frame.width
+    let viewWidth = view.frame.width
+    let insetWidth = (parentWidth - viewWidth) / 2
+    view.frame.origin.x = insetWidth
+    view.frame.origin.y = yOrigin
 }
 
 struct V {
     let id: String
     let type: VTypes
     let props: VProps
-    let children: [V]
+    var children: [V]
+    var parentId: String? = "root"
+    var childrenIds = [String: V]()
+    init(parentId: String? = nil, id: String, type: VTypes, props: VProps, children: [V]) {
+        self.id = id
+        self.type = type
+        self.props = props
+        self.children = children
+        for child in children {
+            childrenIds[child.id] = child
+        }
+        if let parentId = parentId {
+            self.parentId = parentId
+        }
+    }
 }
 
 enum VTypes {
@@ -71,37 +149,6 @@ struct VProps {
     let width: CGFloat
     let height: CGFloat
     let color: UIColor
-}
-
-func render(nextNode: V, parentView: View, yOrigin: CGFloat = 0) -> View {
-    let view = View(id: nextNode.id)
-    // TODO add view to dict
-    view.frame.size.width = nextNode.props.width
-    view.frame.size.height = nextNode.props.height
-    view.backgroundColor = nextNode.props.color
-    
-    //    switch data.type {
-    //    case .view:
-    //    case .text:
-    //    }
-    
-    func position(parentView: View, view: View) {
-        let parentWidth = parentView.frame.width
-        let viewWidth = view.frame.width
-        let insetWidth = (parentWidth - viewWidth) / 2
-        view.frame.origin.x = insetWidth
-        view.frame.origin.y = yOrigin
-    }
-    position(parentView: parentView, view: view)
-    
-    var yOrigin = parentView.frame.origin.y
-    for child in nextNode.children {
-        let childView = render(nextNode: child, parentView: view, yOrigin: yOrigin)
-        view.addSubview(childView)
-        yOrigin = childView.frame.origin.y + childView.frame.height
-    }
-    
-    return view
 }
 
 class View: UIView {
