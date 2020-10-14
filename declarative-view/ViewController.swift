@@ -19,12 +19,21 @@ class ViewController: UIViewController {
 }
 
 class Screen1: Reflex {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(changeColor), userInfo: nil, repeats: true)
+    }
+    @objc func changeColor() {
+        store.dispatch(action: .changeColor)
+    }
     override func react(to state: State) -> V {
         return V(
                     id: "container",
                     type: .view,
-                    props: VProps(width: 200, height: 200, color: .green),
-                    children: []
+                    props: VProps(width: 200, height: 200, color: state.color),
+                    children: [
+                        V(id: "one", type: .view, props: VProps(width: 100, height: 200, color: .cyan), children: [])
+                    ]
                 )
     }
 }

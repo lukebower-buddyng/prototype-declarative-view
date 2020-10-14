@@ -10,10 +10,8 @@ import UIKit
 
 let globalStore = Store(state: State(), reducer: reducer)
 
-struct State {}
-
-enum Action {
-    case action1
+struct State {
+    var color = UIColor.darkGray
 }
 
 class Store {
@@ -32,8 +30,20 @@ class Store {
     }
 }
 
+enum Action {
+    case changeColor
+}
+
 func reducer(state: inout State, action: Action) -> State {
-    return state
+    switch action {
+    case .changeColor:
+        if state.color == UIColor.darkGray {
+            state.color = .black
+        } else {
+            state.color = UIColor.darkGray
+        }
+        return state
+    }
 }
 
 class Reflex: UIViewController {
