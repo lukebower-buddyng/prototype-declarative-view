@@ -30,8 +30,6 @@ struct VB: VirtualView {
         button.id = id
         button.frame.size.width = 100
         button.frame.size.height = 30
-        button.setTitle("Button", for: .normal)
-        button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .purple
         button.action = props.action
         button.addTarget(button, action: #selector(Button.run), for: .touchUpInside)
@@ -42,8 +40,8 @@ struct VB: VirtualView {
         let button = view as! Button
         button.frame.size.width = 100
         button.frame.size.height = 30
-        button.setTitle("Button", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.action = props.action
+        button.addTarget(button, action: #selector(Button.run), for: .touchUpInside)
     }
 }
 struct VBProps {

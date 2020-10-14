@@ -23,14 +23,18 @@ class Screen1: Reflex {
         super.viewDidLoad()
     }
     override func react(to state: State) -> VirtualView {
-        return V(
-                    id: "container",
+        return V(id: "container",
                     props: VProps(width: 200, height: 200, color: state.color),
                     children: [
-                        V(id: "one", props: VProps(width: 100, height: 200, color: .cyan), children: [
-                            VB(id: "button", props: VBProps(action: {
-                                self.store.dispatch(action: .changeColor)
-                            }), children: []),
+                        V(id: "one",
+                          props: VProps(width: 100, height: 200, color: .cyan),
+                          children: [
+                            VB(id: "button",
+                               props: VBProps(action: { self.store.dispatch(action: .changeColor) }),
+                               children: [
+                                    V(id: "binki", props: VProps(width: 10, height: 10, color: .orange), children: [])
+                                ]
+                            ),
                         ])
                     ]
                 )
