@@ -90,63 +90,12 @@ class Reflex: UIViewController {
     @objc func reflex() {
         prevNode = nextNode
         nextNode = react(to: store.state)
-        render(nextNode: &nextNode, prevNode: prevNode, yOrigin: 30)
+        render(views: &views, nextNode: &nextNode, prevNode: prevNode, yOrigin: 30)
     }
     
     /// Override this function to respond to changes in state
     func react(to state: State) -> VirtualView {
         return V(id: "0", props: VProps(width: 0, height: 0, color: .clear), children: [])
-    }
-    
-    // TODO factor out into React file
-    func render(nextNode: inout VirtualView, prevNode: VirtualView? = nil, yOrigin: CGFloat? = nil) {
-        // check for parent
-        guard let parentId = nextNode.parentId,
-            let parentView = views[parentId] else {
-                print("No root")
-                return
-        }
-        let nodeIdPath = parentId + "." + nextNode.id
-        var yOrigin = yOrigin ?? parentView.frame.origin.y
-        
-        // check if node exists
-        if views[nodeIdPath] == nil || prevNode == nil {
-            // add new view if doesn't exist
-            let view = View(id: nextNode.id)
-            parentView.addSubview(view)
-            views[nodeIdPath] = view
-            // configure from scratch
-            nextNode.setup(view: view, parentView: parentView, yOrigin: yOrigin)
-            view.layer.borderWidth = 2
-            view.layer.borderColor = UIColor.white.cgColor
-        }
-        else {
-            // apply updates compared to previous tree
-            let view = views[nodeIdPath]!
-            nextNode.update(view: view, parentView: parentView, prevNode: prevNode, yOrigin: yOrigin)
-            view.layer.borderWidth = 2
-            view.layer.borderColor = UIColor.black.cgColor
-            // prune dead leaves (garbage collection)
-            for subView in view.subviews {
-                let childView = subView as! View
-                if nextNode.childrenIds[childView.id] == nil { // view is not needed in next time step
-                    childView.removeFromSuperview()
-                }
-            }
-        }
-        
-        // render current nodes
-        for i in 0 ..< nextNode.children.count {
-            nextNode.children[i].parentId = nodeIdPath // set parent id
-            if i == 0 {
-                yOrigin = 0 // reset yOrigin for first child (to position it at the top of the parent container)
-            }
-            let prevChild = prevNode?.childrenIds[nextNode.children[i].id]
-            render(nextNode: &nextNode.children[i], prevNode: prevChild, yOrigin: yOrigin)
-            if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
-                yOrigin = childView.frame.origin.y + childView.frame.height // update start position
-            }
-        }
     }
     
 }

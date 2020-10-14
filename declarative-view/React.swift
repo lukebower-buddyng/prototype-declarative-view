@@ -94,3 +94,53 @@ class View: UIView {
         super.init(coder: coder)
     }
 }
+
+func render(views: inout [String: View], nextNode: inout VirtualView, prevNode: VirtualView? = nil, yOrigin: CGFloat? = nil) {
+    // check for parent
+    guard let parentId = nextNode.parentId,
+        let parentView = views[parentId] else {
+            print("No root")
+            return
+    }
+    let nodeIdPath = parentId + "." + nextNode.id
+    var yOrigin = yOrigin ?? parentView.frame.origin.y
+    
+    // check if node exists
+    if views[nodeIdPath] == nil || prevNode == nil {
+        // add new view if doesn't exist
+        let view = View(id: nextNode.id)
+        parentView.addSubview(view)
+        views[nodeIdPath] = view
+        // configure from scratch
+        nextNode.setup(view: view, parentView: parentView, yOrigin: yOrigin)
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.white.cgColor
+    }
+    else {
+        // apply updates compared to previous tree
+        let view = views[nodeIdPath]!
+        nextNode.update(view: view, parentView: parentView, prevNode: prevNode, yOrigin: yOrigin)
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.black.cgColor
+        // prune dead leaves (garbage collection)
+        for subView in view.subviews {
+            let childView = subView as! View
+            if nextNode.childrenIds[childView.id] == nil { // view is not needed in next time step
+                childView.removeFromSuperview()
+            }
+        }
+    }
+    
+    // render current nodes
+    for i in 0 ..< nextNode.children.count {
+        nextNode.children[i].parentId = nodeIdPath // set parent id
+        if i == 0 {
+            yOrigin = 0 // reset yOrigin for first child (to position it at the top of the parent container)
+        }
+        let prevChild = prevNode?.childrenIds[nextNode.children[i].id]
+        render(views: &views, nextNode: &nextNode.children[i], prevNode: prevChild, yOrigin: yOrigin)
+        if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
+            yOrigin = childView.frame.origin.y + childView.frame.height // update start position
+        }
+    }
+}
