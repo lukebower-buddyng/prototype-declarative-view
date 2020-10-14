@@ -67,9 +67,9 @@ class ViewController: UIViewController {
                    props: VProps(width: 200, height: 200, color: .green),
                    children: [
                         V(
-                            id: "purple",
+                            id: "red",
                             type: .view,
-                            props: VProps(width: 100, height: 100, color: .purple),
+                            props: VProps(width: 100, height: 100, color: .red),
                             children: []
                         ),
                         V(
@@ -94,7 +94,7 @@ class ViewController: UIViewController {
         
         trees.append(contentsOf: [v0, v1, v2])
         
-        var _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(renderNext), userInfo: nil, repeats: true)
+        var _ = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(renderNext), userInfo: nil, repeats: true)
 
     }
     
@@ -127,12 +127,16 @@ func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
         // configure from scratch
         style(view: view, props: nextNode.props)
         position(parentView: parentView, view: view, yOrigin: yOrigin)
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.white.cgColor
     }
     else {
         // apply updates compared to previous tree
         let view = views[nodeIdPath]!
         updateStyle(view: view, prevNode: prevNode!, nextNode: nextNode)
         position(parentView: parentView, view: view, yOrigin: yOrigin)
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.black.cgColor
         // prune dead leaves (garbage collection)
         for subView in view.subviews {
             let childView = subView as! View
@@ -148,7 +152,8 @@ func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
         if i == 0 {
             yOrigin = 0 // reset yOrigin for first child (to position it at the top of the parent container)
         }
-        render(nextNode: &nextNode.children[i], yOrigin: yOrigin)
+        let prevChild = prevNode?.childrenIds[nextNode.children[i].id]
+        render(nextNode: &nextNode.children[i], prevNode: prevChild, yOrigin: yOrigin)
         if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
             yOrigin = childView.frame.origin.y + childView.frame.height // update start position
         }
