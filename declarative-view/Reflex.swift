@@ -50,19 +50,21 @@ class Reflex: UIViewController {
     
     let store: Store
    
-    var views = [String: View]()
-    var rootView = View(id: "root")
+    var views = [String: UIView]()
+    var rootView = UIView()
     
     var prevNode: VirtualView? = nil
     var nextNode: VirtualView = V(id: "container", props: VProps(width: 0, height: 0, color: .clear), children: [])
     
     init() {
         self.store = globalStore
+        rootView.id = "root"
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         self.store = globalStore
+        rootView.id = "root"
         super.init(coder: coder)
     }
     
@@ -73,7 +75,7 @@ class Reflex: UIViewController {
         rootView.frame.size = view.frame.size
         rootView.backgroundColor = .gray
         view.addSubview(rootView)
-        views[rootView.id] = rootView
+        views[rootView.id ?? "root"] = rootView
         
         reflex()
     }

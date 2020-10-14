@@ -21,17 +21,17 @@ class ViewController: UIViewController {
 class Screen1: Reflex {
     override func viewDidLoad() {
         super.viewDidLoad()
-        _ = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(changeColor), userInfo: nil, repeats: true)
-    }
-    @objc func changeColor() {
-        store.dispatch(action: .changeColor)
     }
     override func react(to state: State) -> VirtualView {
         return V(
                     id: "container",
                     props: VProps(width: 200, height: 200, color: state.color),
                     children: [
-                        V(id: "one", props: VProps(width: 100, height: 200, color: .cyan), children: [])
+                        V(id: "one", props: VProps(width: 100, height: 200, color: .cyan), children: [
+                            VB(id: "button", props: VBProps(action: {
+                                self.store.dispatch(action: .changeColor)
+                            }), children: []),
+                        ])
                     ]
                 )
     }

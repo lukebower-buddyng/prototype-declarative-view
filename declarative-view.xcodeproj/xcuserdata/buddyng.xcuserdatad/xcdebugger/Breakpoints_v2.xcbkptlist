@@ -14,8 +14,8 @@
             filePath = "declarative-view/Reflex.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "viewDidAppear(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "declarative-view/ViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
             landmarkName = "react(to:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -39,16 +39,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "312BC7FC-DF10-4FB4-B801-25284E90DBAC"
-            shouldBeEnabled = "Yes"
+            uuid = "8B008368-C8BA-477D-989F-FC04E1528453"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "declarative-view/ViewController.swift"
+            filePath = "declarative-view/React.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "changeColor()"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "update(view:parentView:prevNode:yOrigin:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

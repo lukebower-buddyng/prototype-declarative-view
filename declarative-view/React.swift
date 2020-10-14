@@ -8,6 +8,48 @@
 
 import UIKit
 
+struct VB: VirtualView {
+    var id: String
+    var parentId: String? = "root"
+    var children: [VirtualView]
+    var childrenIds = [String : VirtualView]()
+    var props: VBProps
+    init(parentId: String? = nil, id: String, props: VBProps, children: [VirtualView]) {
+        self.id = id
+        self.props = props
+        self.children = children
+        for child in children {
+            childrenIds[child.id] = child
+        }
+        if let parentId = parentId {
+            self.parentId = parentId
+        }
+    }
+    func create(parentView: UIView, yOrigin: CGFloat) -> UIView {
+        let button = Button()
+        button.id = id
+        button.frame.size.width = 100
+        button.frame.size.height = 30
+        button.setTitle("Button", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .purple
+        button.action = props.action
+        button.addTarget(button, action: #selector(Button.run), for: .touchUpInside)
+        return button
+    }
+    func update(view: UIView, parentView: UIView, prevNode: VirtualView?, yOrigin: CGFloat) {
+        // TODO add checks to only update if virtual node changed
+        let button = view as! Button
+        button.frame.size.width = 100
+        button.frame.size.height = 30
+        button.setTitle("Button", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+    }
+}
+struct VBProps {
+    let action: ()->()
+}
+
 struct V: VirtualView {
     let id: String
     let props: VProps
@@ -25,29 +67,32 @@ struct V: VirtualView {
             self.parentId = parentId
         }
     }
-    func setup(view: View, parentView: View, yOrigin: CGFloat) {
+    func create(parentView: UIView, yOrigin: CGFloat) -> UIView  {
+        let view = UIView()
+        view.id = id
         style(view: view, props: props)
         position(parentView: parentView, view: view, yOrigin: yOrigin)
+        return view
     }
-    func update(view: View, parentView: View, prevNode: VirtualView? = nil, yOrigin: CGFloat) {
+    func update(view: UIView, parentView: UIView, prevNode: VirtualView? = nil, yOrigin: CGFloat) {
         if let prevNode = prevNode as? V {
             updateStyle(view: view, prevNode: prevNode, nextNode: self)
         }
         position(parentView: parentView, view: view, yOrigin: yOrigin)
     }
-    func style(view: View, props: VProps) {
+    func style(view: UIView, props: VProps) {
         view.frame.size.width = props.width
         view.frame.size.height = props.height
         view.backgroundColor = props.color
     }
-    func position(parentView: View, view: View, yOrigin: CGFloat) {
+    func position(parentView: UIView, view: UIView, yOrigin: CGFloat) {
         let parentWidth = parentView.frame.width
         let viewWidth = view.frame.width
         let insetWidth = (parentWidth - viewWidth) / 2
         view.frame.origin.x = insetWidth
         view.frame.origin.y = yOrigin
     }
-    func updateStyle(view: View, prevNode: V, nextNode: V) {
+    func updateStyle(view: UIView, prevNode: V, nextNode: V) {
         if prevNode.props.height != nextNode.props.height {
             view.frame.size.height = nextNode.props.height
         }
@@ -60,12 +105,6 @@ struct V: VirtualView {
     }
     func updatePosition() {}
 }
-
-enum VTypes {
-    case view
-    case text
-}
-
 struct VProps {
     let width: CGFloat
     let height: CGFloat
@@ -77,25 +116,11 @@ protocol VirtualView {
     var parentId: String? { get set }
     var children: [VirtualView] { get set }
     var childrenIds: [String: VirtualView] { get set }
-    func setup(view: View, parentView: View, yOrigin: CGFloat)
-    func update(view: View, parentView: View, prevNode: VirtualView?, yOrigin: CGFloat)
+    func create(parentView: UIView, yOrigin: CGFloat) -> UIView
+    func update(view: UIView, parentView: UIView, prevNode: VirtualView?, yOrigin: CGFloat)
 }
 
-class View: UIView {
-    let id: String
-    
-    init(id: String) {
-        self.id = id
-        super.init(frame: CGRect())
-    }
-    
-    required init?(coder: NSCoder) {
-        self.id = ""
-        super.init(coder: coder)
-    }
-}
-
-func render(views: inout [String: View], nextNode: inout VirtualView, prevNode: VirtualView? = nil, yOrigin: CGFloat? = nil) {
+func render(views: inout [String: UIView], nextNode: inout VirtualView, prevNode: VirtualView? = nil, yOrigin: CGFloat? = nil) {
     // check for parent
     guard let parentId = nextNode.parentId,
         let parentView = views[parentId] else {
@@ -108,11 +133,9 @@ func render(views: inout [String: View], nextNode: inout VirtualView, prevNode: 
     // check if node exists
     if views[nodeIdPath] == nil || prevNode == nil {
         // add new view if doesn't exist
-        let view = View(id: nextNode.id)
+        let view = nextNode.create(parentView: parentView, yOrigin: yOrigin)
         parentView.addSubview(view)
         views[nodeIdPath] = view
-        // configure from scratch
-        nextNode.setup(view: view, parentView: parentView, yOrigin: yOrigin)
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.white.cgColor
     }
@@ -124,9 +147,8 @@ func render(views: inout [String: View], nextNode: inout VirtualView, prevNode: 
         view.layer.borderColor = UIColor.black.cgColor
         // prune dead leaves (garbage collection)
         for subView in view.subviews {
-            let childView = subView as! View
-            if nextNode.childrenIds[childView.id] == nil { // view is not needed in next time step
-                childView.removeFromSuperview()
+            if nextNode.childrenIds[subView.id ?? ""] == nil { // view is not needed in next time step
+                subView.removeFromSuperview()
             }
         }
     }
@@ -142,5 +164,34 @@ func render(views: inout [String: View], nextNode: inout VirtualView, prevNode: 
         if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
             yOrigin = childView.frame.origin.y + childView.frame.height // update start position
         }
+    }
+}
+
+extension UIView {
+    var id: String? {
+        get {
+            return self.accessibilityIdentifier
+        }
+        set {
+            self.accessibilityIdentifier = newValue
+        }
+    }
+    func view(withId id: String) -> UIView? {
+        if self.id == id {
+            return self
+        }
+        for view in self.subviews {
+            if let view = view.view(withId: id) {
+                return view
+            }
+        }
+        return nil
+    }
+}
+
+class Button: UIButton {
+    var action: ()->() = {}
+    @objc func run() {
+        action()
     }
 }
