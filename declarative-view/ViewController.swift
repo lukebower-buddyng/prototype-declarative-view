@@ -26,13 +26,12 @@ class Screen1: Reflex {
     @objc func changeColor() {
         store.dispatch(action: .changeColor)
     }
-    override func react(to state: State) -> V {
+    override func react(to state: State) -> VirtualView {
         return V(
                     id: "container",
-                    type: .view,
                     props: VProps(width: 200, height: 200, color: state.color),
                     children: [
-                        V(id: "one", type: .view, props: VProps(width: 100, height: 200, color: .cyan), children: [])
+                        V(id: "one", props: VProps(width: 100, height: 200, color: .cyan), children: [])
                     ]
                 )
     }

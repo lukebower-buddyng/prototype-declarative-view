@@ -53,8 +53,8 @@ class Reflex: UIViewController {
     var views = [String: View]()
     var rootView = View(id: "root")
     
-    var prevNode: V? = nil
-    var nextNode = V(id: "container", type: .view, props: VProps(width: 0, height: 0, color: .clear), children: [])
+    var prevNode: VirtualView? = nil
+    var nextNode: VirtualView = V(id: "container", props: VProps(width: 0, height: 0, color: .clear), children: [])
     
     init() {
         self.store = globalStore
@@ -94,11 +94,12 @@ class Reflex: UIViewController {
     }
     
     /// Override this function to respond to changes in state
-    func react(to state: State) -> V {
-        return V(id: "1", type: .view, props: VProps(width: 0, height: 0, color: .clear), children: [])
+    func react(to state: State) -> VirtualView {
+        return V(id: "0", props: VProps(width: 0, height: 0, color: .clear), children: [])
     }
     
-    func render(nextNode: inout V, prevNode: V? = nil, yOrigin: CGFloat? = nil) {
+    // TODO factor out into React file
+    func render(nextNode: inout VirtualView, prevNode: VirtualView? = nil, yOrigin: CGFloat? = nil) {
         // check for parent
         guard let parentId = nextNode.parentId,
             let parentView = views[parentId] else {
@@ -115,16 +116,14 @@ class Reflex: UIViewController {
             parentView.addSubview(view)
             views[nodeIdPath] = view
             // configure from scratch
-            style(view: view, props: nextNode.props)
-            position(parentView: parentView, view: view, yOrigin: yOrigin)
+            nextNode.setup(view: view, parentView: parentView, yOrigin: yOrigin)
             view.layer.borderWidth = 2
             view.layer.borderColor = UIColor.white.cgColor
         }
         else {
             // apply updates compared to previous tree
             let view = views[nodeIdPath]!
-            updateStyle(view: view, prevNode: prevNode!, nextNode: nextNode)
-            position(parentView: parentView, view: view, yOrigin: yOrigin)
+            nextNode.update(view: view, parentView: parentView, prevNode: prevNode, yOrigin: yOrigin)
             view.layer.borderWidth = 2
             view.layer.borderColor = UIColor.black.cgColor
             // prune dead leaves (garbage collection)
