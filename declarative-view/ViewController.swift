@@ -32,7 +32,7 @@ class Screen1: Reflex {
                             VB(id: "button",
                                props: VBProps(action: { self.store.dispatch(action: .changeColor) }),
                                children: [
-                                    V(id: "binki", props: VProps(width: 10, height: 10, color: .orange), children: [])
+                                    T(id: "text", props: TProps(text: "Button"), children: [])
                                 ]
                             ),
                         ])

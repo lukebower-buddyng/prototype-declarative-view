@@ -8,6 +8,50 @@
 
 import UIKit
 
+struct T: VirtualView {
+    var id: String
+    
+    var parentId: String?
+    
+    var children: [VirtualView]
+    
+    var childrenIds = [String : VirtualView]()
+    
+    var props: TProps
+    
+    init(parentId: String? = nil, id: String, props: TProps, children: [VirtualView]) {
+        self.id = id
+        self.props = props
+        self.children = children
+        for child in children {
+            childrenIds[child.id] = child
+        }
+        if let parentId = parentId {
+            self.parentId = parentId
+        }
+    }
+    
+    func create(parentView: UIView, yOrigin: CGFloat) -> UIView {
+        let view = Text(id: id)
+        view.text = props.text
+        view.textColor = .black
+        view.frame.size.width = 100
+        view.frame.size.height = 30
+        return view
+    }
+    
+    func update(view: UIView, parentView: UIView, prevNode: VirtualView?, yOrigin: CGFloat) {
+        let view = view as! Text
+        view.text = props.text
+        view.textColor = .black
+        view.frame.size.width = 100
+        view.frame.size.height = 30
+    }
+}
+struct TProps {
+    let text: String
+}
+
 struct VB: VirtualView {
     var id: String
     var parentId: String? = "root"
@@ -26,8 +70,7 @@ struct VB: VirtualView {
         }
     }
     func create(parentView: UIView, yOrigin: CGFloat) -> UIView {
-        let button = Button()
-        button.id = id
+        let button = Button(id: id)
         button.frame.size.width = 100
         button.frame.size.height = 30
         button.backgroundColor = .purple
@@ -66,8 +109,7 @@ struct V: VirtualView {
         }
     }
     func create(parentView: UIView, yOrigin: CGFloat) -> UIView  {
-        let view = UIView()
-        view.id = id
+        let view = View(id: id)
         style(view: view, props: props)
         position(parentView: parentView, view: view, yOrigin: yOrigin)
         return view
@@ -165,6 +207,49 @@ func render(views: inout [String: UIView], nextNode: inout VirtualView, prevNode
     }
 }
 
+class View: UIView {
+    init(id: String) {
+        super.init(frame: CGRect())
+        self.id = id
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.id = ""
+    }
+}
+
+class Text: UILabel {
+    init(id: String) {
+        super.init(frame: CGRect())
+        self.id = id
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.id = ""
+    }
+}
+
+class Button: UIButton {
+    init(id: String) {
+        super.init(frame: CGRect())
+        self.id = id
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.id = ""
+    }
+    
+    var action: ()->() = {}
+    
+    @objc func run() {
+        action()
+    }
+}
+
+
 extension UIView {
     var id: String? {
         get {
@@ -184,12 +269,5 @@ extension UIView {
             }
         }
         return nil
-    }
-}
-
-class Button: UIButton {
-    var action: ()->() = {}
-    @objc func run() {
-        action()
     }
 }
