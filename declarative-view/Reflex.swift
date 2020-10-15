@@ -49,35 +49,21 @@ func reducer(state: inout State, action: Action) -> State {
 class Reflex: UIViewController {
     
     let store: Store
-   
-    var views = [String: UIView]()
-    var rootView = UIView()
-    
-    var prevNode: VirtualView? = nil
-    var nextNode: VirtualView = V(id: "container", props: VProps(width: 0, height: 0, color: .clear), children: [])
     
     init() {
         self.store = globalStore
-        rootView.id = "root"
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         self.store = globalStore
-        rootView.id = "root"
         super.init(coder: coder)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        NotificationCenter.default.addObserver(self, selector: #selector(reflex), name: Notification.Name("StateUpdated"), object: nil)
-        // init root view
-        rootView.frame.size = view.frame.size
-        rootView.backgroundColor = .gray
-        view.addSubview(rootView)
-        views[rootView.id ?? "root"] = rootView
-        
-        reflex()
+        NotificationCenter.default.addObserver(self, selector: #selector(respond), name: Notification.Name("StateUpdated"), object: nil)
+        self.react(to: store.state)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -85,11 +71,54 @@ class Reflex: UIViewController {
         NotificationCenter.default.removeObserver(self, name: Notification.Name("StateUpdated"), object: nil)
     }
     
+    @objc func respond() {
+        react(to: store.state)
+    }
+    
     func add(_ reflex: UIViewController) {
         super.addViewController(reflex)
     }
     
-    @objc func reflex() {
+    /// Override this function to respond to changes in state
+    func react(to state: State) {}
+    
+}
+
+class ReflexRender: Reflex {
+    
+    var views = [String: UIView]()
+    var rootView = UIView()
+    
+    var prevNode: VirtualView? = nil
+    var nextNode: VirtualView = V(id: "container", props: VProps(width: 0, height: 0, color: .clear), children: [])
+    
+    override init() {
+        rootView.id = "root"
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        rootView.id = "root"
+        super.init(coder: coder)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        // init root view
+        rootView.frame.size = view.frame.size
+        rootView.backgroundColor = .gray
+        view.addSubview(rootView)
+        views[rootView.id ?? "root"] = rootView
+        // build tree and render
+        respond()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("StateUpdated"), object: nil)
+    }
+    
+    @objc override func respond() {
         prevNode = nextNode
         nextNode = react(to: store.state)
         render(views: &views, nextNode: &nextNode, prevNode: prevNode, yOrigin: 30)

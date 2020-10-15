@@ -13,7 +13,8 @@
 		1409C3142534AC3E003ACBCE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1409C3132534AC3E003ACBCE /* Assets.xcassets */; };
 		1409C3172534AC3E003ACBCE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1409C3152534AC3E003ACBCE /* LaunchScreen.storyboard */; };
 		145090322537111E00C3C4D9 /* Reflex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145090312537111E00C3C4D9 /* Reflex.swift */; };
-		145090342537191900C3C4D9 /* React.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145090332537191900C3C4D9 /* React.swift */; };
+		145090342537191900C3C4D9 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145090332537191900C3C4D9 /* Components.swift */; };
+		145090362538C1B500C3C4D9 /* Render.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145090352538C1B500C3C4D9 /* Render.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +27,8 @@
 		1409C3182534AC3E003ACBCE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1409C31E2534AC51003ACBCE /* declarative-view.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "declarative-view.entitlements"; sourceTree = "<group>"; };
 		145090312537111E00C3C4D9 /* Reflex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reflex.swift; sourceTree = "<group>"; };
-		145090332537191900C3C4D9 /* React.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = React.swift; sourceTree = "<group>"; };
+		145090332537191900C3C4D9 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		145090352538C1B500C3C4D9 /* Render.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Render.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,12 +64,13 @@
 				1409C31E2534AC51003ACBCE /* declarative-view.entitlements */,
 				1409C30A2534AC3B003ACBCE /* AppDelegate.swift */,
 				1409C30C2534AC3B003ACBCE /* SceneDelegate.swift */,
-				1409C30E2534AC3B003ACBCE /* ViewController.swift */,
 				1409C3132534AC3E003ACBCE /* Assets.xcassets */,
 				1409C3152534AC3E003ACBCE /* LaunchScreen.storyboard */,
 				1409C3182534AC3E003ACBCE /* Info.plist */,
+				1409C30E2534AC3B003ACBCE /* ViewController.swift */,
 				145090312537111E00C3C4D9 /* Reflex.swift */,
-				145090332537191900C3C4D9 /* React.swift */,
+				145090352538C1B500C3C4D9 /* Render.swift */,
+				145090332537191900C3C4D9 /* Components.swift */,
 			);
 			path = "declarative-view";
 			sourceTree = "<group>";
@@ -145,8 +148,9 @@
 				1409C30F2534AC3B003ACBCE /* ViewController.swift in Sources */,
 				145090322537111E00C3C4D9 /* Reflex.swift in Sources */,
 				1409C30B2534AC3B003ACBCE /* AppDelegate.swift in Sources */,
-				145090342537191900C3C4D9 /* React.swift in Sources */,
+				145090342537191900C3C4D9 /* Components.swift in Sources */,
 				1409C30D2534AC3B003ACBCE /* SceneDelegate.swift in Sources */,
+				145090362538C1B500C3C4D9 /* Render.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     }
 }
 
-class Screen1: Reflex {
+class Screen1: ReflexRender {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
