@@ -103,7 +103,7 @@ struct VProps {
     let color: UIColor
 }
 
-class View: MDCCard {
+class View: UIView {
     init(id: String) {
         super.init(frame: CGRect())
         self.id = id
@@ -193,7 +193,6 @@ struct VB: VirtualView {
         button.frame.size.width = 150
         button.frame.size.height = 60
         button.setTitle("Button", for: .normal)
-        //button.backgroundColor = .gray
         button.action = props.action
         button.addTarget(button, action: #selector(Button.run), for: .touchUpInside)
         return button
@@ -228,5 +227,40 @@ class Button: MDCButton {
     
     @objc func run() {
         action()
+    }
+}
+
+
+struct VCProps {
+    let color: UIColor
+    let width: CGFloat
+    let height: CGFloat
+}
+class Card: MDCCard {
+    init(id: String) {
+        super.init(frame: CGRect())
+        self.id = id
+    }
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.id = ""
+    }
+}
+struct VC: VirtualView {
+    var id: String
+    var parentId: String?
+    var props: VCProps
+    var children: [VirtualView]
+    var childrenIds = [String : VirtualView]()
+    func create(parentView: UIView, yOrigin: CGFloat) -> UIView {
+        let card = Card(id: id)
+        card.applyTheme(withScheme: containerScheme)
+        card.backgroundColor = props.color
+        card.frame.size.width = props.width
+        card.frame.size.height = props.height
+        return card
+    }
+    func update(view: UIView, parentView: UIView, prevNode: VirtualView?, yOrigin: CGFloat) {
+        //let card = view as! Card
     }
 }

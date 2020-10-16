@@ -33,13 +33,13 @@ class Screen1: ReflexRender {
         return V(id: "container",
                  props: VProps(width: view.frame.width, height: view.frame.height, color: state.color),
                     children: [
-                        V(id: "one",
-                          props: VProps(width: 400, height: 200, color: .lightGray),
-                          children: [
-                            VB(id: "button",
-                               props: VBProps(action: { self.store.dispatch(action: .changeColor) }),
-                               children: []
-                            ),
+                        VC(id: "one",
+                           props: VCProps(color: .lightGray, width: 400, height: 200),
+                           children: [
+                                VB(id: "button",
+                                   props: VBProps(action: { self.store.dispatch(action: .changeColor) }),
+                                   children: []
+                                ),
                         ])
                     ]
                 )
