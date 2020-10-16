@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import MaterialComponents
+import MaterialComponents.MaterialButtons_Theming
+
 
 extension UIView {
     var id: String? {
@@ -100,7 +103,7 @@ struct VProps {
     let color: UIColor
 }
 
-class View: UIView {
+class View: MDCCard {
     init(id: String) {
         super.init(frame: CGRect())
         self.id = id
@@ -186,9 +189,11 @@ struct VB: VirtualView {
     
     func create(parentView: UIView, yOrigin: CGFloat) -> UIView {
         let button = Button(id: id)
-        button.frame.size.width = 100
-        button.frame.size.height = 30
-        button.backgroundColor = .purple
+        button.applyContainedTheme(withScheme: containerScheme)
+        button.frame.size.width = 150
+        button.frame.size.height = 60
+        button.setTitle("Button", for: .normal)
+        //button.backgroundColor = .gray
         button.action = props.action
         button.addTarget(button, action: #selector(Button.run), for: .touchUpInside)
         return button
@@ -196,11 +201,11 @@ struct VB: VirtualView {
     
     func update(view: UIView, parentView: UIView, prevNode: VirtualView?, yOrigin: CGFloat) {
         // TODO add checks to only update if virtual node changed
-        let button = view as! Button
-        button.frame.size.width = 100
-        button.frame.size.height = 30
-        button.action = props.action
-        button.addTarget(button, action: #selector(Button.run), for: .touchUpInside)
+//        let button = view as! Button
+//        button.frame.size.width = 100
+//        button.frame.size.height = 30
+//        button.action = props.action
+//        button.addTarget(button, action: #selector(Button.run), for: .touchUpInside)
     }
 }
 
@@ -208,7 +213,7 @@ struct VBProps {
     let action: ()->()
 }
 
-class Button: UIButton {
+class Button: MDCButton {
     init(id: String) {
         super.init(frame: CGRect())
         self.id = id

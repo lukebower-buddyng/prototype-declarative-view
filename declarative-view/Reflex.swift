@@ -8,12 +8,6 @@
 
 import UIKit
 
-let globalStore = Store(state: State(), reducer: reducer)
-
-struct State {
-    var color = UIColor.darkGray
-}
-
 class Store {
     var reducer: (inout State, Action) -> State
     var state: State
@@ -27,22 +21,6 @@ class Store {
         let nextState = reducer(&state, action)
         state = nextState
         NotificationCenter.default.post(name: Notification.Name("StateUpdated"), object: nil)
-    }
-}
-
-enum Action {
-    case changeColor
-}
-
-func reducer(state: inout State, action: Action) -> State {
-    switch action {
-    case .changeColor:
-        if state.color == UIColor.darkGray {
-            state.color = .black
-        } else {
-            state.color = UIColor.darkGray
-        }
-        return state
     }
 }
 
@@ -106,7 +84,7 @@ class ReflexRender: Reflex {
         super.viewDidAppear(true)
         // init root view
         rootView.frame.size = view.frame.size
-        rootView.backgroundColor = .gray
+        rootView.backgroundColor = .clear
         view.addSubview(rootView)
         views[rootView.id ?? "root"] = rootView
         // build tree and render
@@ -121,7 +99,7 @@ class ReflexRender: Reflex {
     @objc override func respond() {
         prevNode = nextNode
         nextNode = react(to: store.state)
-        render(views: &views, nextNode: &nextNode, prevNode: prevNode, yOrigin: 30)
+        render(views: &views, nextNode: &nextNode, prevNode: prevNode, yOrigin: 40)
     }
     
     /// Override this function to respond to changes in state

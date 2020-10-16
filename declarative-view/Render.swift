@@ -8,6 +8,8 @@
 
 import UIKit
 
+let debug = false
+
 func render(views: inout [String: UIView], nextNode: inout VirtualView, prevNode: VirtualView? = nil, yOrigin: CGFloat? = nil) {
     // check for parent
     guard let parentId = nextNode.parentId,
@@ -24,18 +26,22 @@ func render(views: inout [String: UIView], nextNode: inout VirtualView, prevNode
         let view = nextNode.create(parentView: parentView, yOrigin: yOrigin)
         parentView.addSubview(view)
         views[nodeIdPath] = view
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.white.cgColor
+        if debug {
+            view.layer.borderWidth = 2
+            view.layer.borderColor = UIColor.white.cgColor
+        }
     }
     else {
         // apply updates compared to previous tree
         let view = views[nodeIdPath]!
         nextNode.update(view: view, parentView: parentView, prevNode: prevNode, yOrigin: yOrigin)
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.black.cgColor
+        if debug {
+            view.layer.borderWidth = 2
+            view.layer.borderColor = UIColor.black.cgColor
+        }
         // prune dead leaves (garbage collection)
         for subView in view.subviews {
-            if nextNode.childrenIds[subView.id ?? ""] == nil { // view is not needed in next time step
+            if subView.id != nil && nextNode.childrenIds[subView.id!] == nil { // view is not needed in next time step
                 subView.removeFromSuperview()
             }
         }
