@@ -41,6 +41,7 @@ protocol VirtualView {
     var childrenIds: [String: VirtualView] { get set }
     func create(parentView: UIView, yOrigin: CGFloat) -> UIView
     func update(view: UIView, parentView: UIView, prevNode: VirtualView?, yOrigin: CGFloat)
+    func layoutChildren(views: inout [String: UIView], nextNode: inout VirtualView, prevNode: VirtualView?, nodeIdPath: String, yOrigin: CGFloat?)
 }
 
 
@@ -96,13 +97,6 @@ class V: VirtualView {
         view.frame.size.height = props.height
         view.backgroundColor = props.color
     }
-    func position(parentView: UIView, view: UIView, yOrigin: CGFloat) {
-        let parentWidth = parentView.frame.width
-        let viewWidth = view.frame.width
-        let insetWidth = (parentWidth - viewWidth) / 2
-        view.frame.origin.x = insetWidth
-        view.frame.origin.y = yOrigin
-    }
     func updateStyle(view: UIView, prevNode: V, nextNode: V) {
         if prevNode.style.height != nextNode.style.height {
             view.frame.size.height = nextNode.style.height
@@ -114,7 +108,28 @@ class V: VirtualView {
             view.backgroundColor = nextNode.style.color
         }
     }
+    func position(parentView: UIView, view: UIView, yOrigin: CGFloat) {
+        let parentWidth = parentView.frame.width
+        let viewWidth = view.frame.width
+        let insetWidth = (parentWidth - viewWidth) / 2
+        view.frame.origin.x = insetWidth
+        view.frame.origin.y = yOrigin
+    }
     func updatePosition() {}
+    func layoutChildren(views: inout [String: UIView], nextNode: inout VirtualView, prevNode: VirtualView? = nil, nodeIdPath: String, yOrigin: CGFloat? = nil) {
+        var currentYOrigin = yOrigin
+        for i in 0 ..< nextNode.children.count {
+            nextNode.children[i].parentId = nodeIdPath // set parent id
+            if i == 0 {
+                currentYOrigin = 0 // reset yOrigin for first child (to position it at the top of the parent container)
+            }
+            let prevChild = prevNode?.childrenIds[nextNode.children[i].id]
+            render(views: &views, nextNode: &nextNode.children[i], prevNode: prevChild, yOrigin: currentYOrigin)
+            if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
+                currentYOrigin = childView.frame.origin.y + childView.frame.height // update start position
+            }
+        }
+    }
 }
 
 

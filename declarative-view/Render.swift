@@ -19,9 +19,7 @@ func render(views: inout [String: UIView], nextNode: inout VirtualView, prevNode
     }
     let nodeIdPath = parentId + "." + nextNode.id
     
-    //
-    var yOrigin = yOrigin ?? parentView.frame.origin.y
-    //
+    let yOrigin = yOrigin ?? parentView.frame.origin.y
     
     // check if node exists
     if views[nodeIdPath] == nil || prevNode == nil {
@@ -42,16 +40,5 @@ func render(views: inout [String: UIView], nextNode: inout VirtualView, prevNode
         }
     }
     
-    // render current nodes
-    for i in 0 ..< nextNode.children.count {
-        nextNode.children[i].parentId = nodeIdPath // set parent id
-        if i == 0 {
-            yOrigin = 0 // reset yOrigin for first child (to position it at the top of the parent container)
-        }
-        let prevChild = prevNode?.childrenIds[nextNode.children[i].id]
-        render(views: &views, nextNode: &nextNode.children[i], prevNode: prevChild, yOrigin: yOrigin)
-        if let childView = views[nodeIdPath + "." + nextNode.children[i].id] {
-            yOrigin = childView.frame.origin.y + childView.frame.height // update start position
-        }
-    }
+    nextNode.layoutChildren(views: &views, nextNode: &nextNode, prevNode: prevNode, nodeIdPath: nodeIdPath, yOrigin: yOrigin)
 }
