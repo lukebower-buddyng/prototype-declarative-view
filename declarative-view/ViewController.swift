@@ -30,16 +30,22 @@ class Screen1: ReflexRender {
         super.viewDidLoad()
     }
     override func react(to state: State) -> VirtualView {
-        return V(id: "container",
-                 props: VProps(width: view.frame.width, height: view.frame.height, color: state.color),
+        return V(
+                 id: "container",
+                 style: Style(width: view.frame.width, height: view.frame.height, color: state.color),
                     children: [
-                        VC(id: "one",
+                        VC(
+                           id: "one",
                            props: VCProps(color: .lightGray, width: 400, height: 200),
                            children: [
-                                VB(id: "button",
+                                VB(
+                                   id: "button",
                                    props: VBProps(action: { self.store.dispatch(action: .changeColor) }),
+                                   style: Style(width: 100, height: 100, color: .black),
                                    children: []
                                 ),
+                                T(id: "text", props: TProps(text: "Hello World"), style: Style(width: 200, height: 100, color: .orange),  children: []),
+                                T(id: "text2", props: TProps(text: "Hello World"), style: Style(width: 200, height: 100, color: .orange),  children: [])
                         ])
                     ]
                 )
@@ -51,7 +57,6 @@ let globalStore = Store(state: State(), reducer: reducer)
 struct State {
     var color = UIColor.white
 }
-
 
 enum Action {
     case changeColor

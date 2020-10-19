@@ -68,7 +68,7 @@ class ReflexRender: Reflex {
     var rootView = UIView()
     
     var prevNode: VirtualView? = nil
-    var nextNode: VirtualView = V(id: "container", props: VProps(width: 0, height: 0, color: .clear), children: [])
+    var nextNode: VirtualView = V(id: "container", style: Style(width: 0, height: 0, color: .clear), children: [])
     
     override init() {
         rootView.id = "root"
@@ -104,7 +104,7 @@ class ReflexRender: Reflex {
     
     /// Override this function to respond to changes in state
     func react(to state: State) -> VirtualView {
-        return V(id: "0", props: VProps(width: 0, height: 0, color: .clear), children: [])
+        return V(id: "0", style: Style(width: 0, height: 0, color: .clear), children: [])
     }
     
 }
